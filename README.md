@@ -1,2 +1,562 @@
-# Lathiga
-A present for my honey's birthday
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Cutie Birthday — All-in-One Surprise</title>
+
+<!-- Optional nice cursive font (works online). If offline, browser fallback will be used -->
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#07020a; --card:#120813; --accent:#ff6b9f; --text:#f8eef6; --muted:#d9c8d6; --rose:#b33a5b; --gold:#f6c170;
+    --cakeA:#ffb3d1; --cakeB:#ff8fc0; --cakeC:#ff6fa8;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:
+    radial-gradient(900px 500px at 10% 10%, rgba(182,26,71,0.12), transparent 20%),
+    linear-gradient(180deg,#06020a 0%, #1a0716 60%);
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    color:var(--text);
+  }
+  .wrap{min-height:100dvh;display:grid;place-items:center;padding:24px}
+  .card{width:min(980px,96vw);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:18px; padding:18px;border:1px solid rgba(255,255,255,0.03); box-shadow:0 30px 80px rgba(0,0,0,0.7); overflow:hidden
+  }
+
+  /* HERO / PASSWORD */
+  .hero{padding:18px 18px 8px;text-align:center}
+  .hero h1{font-family: 'Great Vibes', 'Brush Script MT', cursive; font-size:clamp(26px,4vw,44px); margin:0; color:var(--gold);
+    text-shadow:0 6px 20px rgba(246,193,112,0.06)}
+  .hero p{margin:8px 0 0;color:var(--muted)}
+  .gate{display:grid;gap:12px;padding:12px;margin-top:8px}
+  .input-row{display:flex;gap:12px;align-items:center}
+  input[type=password]{flex:1;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));color:var(--text);font-size:16px}
+  .btn{padding:10px 14px;border-radius:12px;border:none;background:linear-gradient(180deg,var(--rose),#ff4f8e);color:white;font-weight:800;cursor:pointer}
+  .music-toggle{padding:8px 10px;border-radius:10px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-weight:700}
+
+  /* top preview swatches */
+  .previewRow{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:12px}
+  .swatch{width:54px;height:38px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.02)}
+  .swatchLabel{font-size:12px;color:var(--muted);text-align:center;margin-top:6px}
+
+  /* cake area */
+  .stage{display:grid;gap:14px}
+  .centered{display:grid;place-items:center}
+  .cake-scene{display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:center}
+  .cake-box{width:340px;height:360px;display:grid;place-items:center;position:relative}
+  .cake-real{width:260px;border-radius:18px;background:linear-gradient(180deg,#fff7f9,#ffeef3);box-shadow:0 18px 60px rgba(180,20,60,0.14);padding:18px;position:relative}
+  .cake-tier{height:56px;border-radius:10px;background:linear-gradient(180deg,var(--cakeA),#ffdfee);margin:6px 0;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(30px)}
+  .candles{position:absolute;top:36px;left:50%;transform:translateX(-50%);display:flex;gap:8px;pointer-events:none}
+  .candle{width:8px;height:36px;background:linear-gradient(180deg,#ffdcd5,#ff9fb1);border-radius:4px;display:flex;align-items:flex-start;justify-content:center}
+  .flame{width:10px;height:14px;border-radius:50%;background:radial-gradient(circle at 40% 30%, #fff9c4 0%, #ffd54f 18%, #ff6b6b 55%);box-shadow:0 10px 26px rgba(255,110,140,0.26);opacity:1;transform-origin:center bottom}
+  .smoke{position:absolute;top:12px;left:50%;transform:translateX(-50%);opacity:0;transition:all .45s ease}
+
+  /* balloons */
+  .balloon-wrap{position:relative;width:260px;height:320px}
+  .balloon{position:absolute;border-radius:50%;box-shadow:0 12px 24px rgba(0,0,0,0.25);opacity:0.95}
+  .b1{width:86px;height:108px;left:20px;top:28px;background:radial-gradient(circle at 30% 20%, #fff6f8, #ff9fb1)}
+  .b2{width:72px;height:92px;left:140px;top:60px;background:radial-gradient(circle at 30% 20%, #fffaf6, #ffd166)}
+  .b3{width:56px;height:74px;left:60px;top:180px;background:radial-gradient(circle at 30% 20%, #fffaf6, #ffd1e0)}
+  .b4{width:72px;height:94px;left:160px;top:180px;background:radial-gradient(circle at 30% 20%, #fff6f8, #9b5de5)}
+  @keyframes floaty{0%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}100%{transform:translateY(0) rotate(-2deg)}}
+  .balloon{animation:floaty 3.6s ease-in-out infinite}
+
+  .hidden{display:none!important}
+
+  /* memory game / UI */
+  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02)); padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+  .hud{display:flex;gap:10px;align-items:center}
+  .stat{background:rgba(255,255,255,0.02);padding:8px 10px;border-radius:999px;font-weight:700;color:var(--muted)}
+  .board{display:grid;gap:10px;grid-template-columns:repeat(4, minmax(70px,1fr));margin-top:12px}
+  .card-outer{aspect-ratio:3/4}
+  .card3d{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .38s;cursor:pointer;user-select:none}
+  .card3d.flipped{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;display:grid;place-items:center;border-radius:10px;backface-visibility:hidden;border:2px solid rgba(255,255,255,0.03);font-size:22px}
+  .front{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))}
+  .back{transform:rotateY(180deg);background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02))}
+  .matched .face{box-shadow:0 0 30px rgba(255,120,160,0.12);border-color:rgba(255,120,160,0.4)}
+
+  .typewrap{min-height:160px;padding:16px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);font-size:18px;line-height:1.6}
+  .glow{color:var(--gold);text-shadow:0 6px 30px rgba(246,193,112,0.12)}
+
+  /* small anims */
+  .swishIn{animation:swish .42s ease both}
+  @keyframes swish{ from{transform:translateY(8px);opacity:0} to{transform:translateY(0);opacity:1} }
+
+  /* hearts */
+  .heart{position:fixed;pointer-events:none;animation:floatUp 1200ms ease forwards}
+  @keyframes floatUp{0%{transform:translateY(0) scale(.7);opacity:0}10%{opacity:1}100%{transform:translateY(-140px) scale(1.05);opacity:0}}
+
+  /* modal */
+  .modal{position:fixed;inset:0;display:grid;place-items:center;background:rgba(0,0,0,0.4);opacity:0;pointer-events:none;transition:.18s}
+  .modal.show{opacity:1;pointer-events:auto}
+  .modal-card{background:#170a14;padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+
+  /* responsive */
+  @media(max-width:520px){ .cake-box{width:260px;height:300px} .card{padding:12px} .board{grid-template-columns:repeat(4,1fr)} .typewrap{font-size:16px} }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" id="mainCard">
+
+      <!-- PASSWORD / PREVIEW -->
+      <div id="stagePassword" class="stage">
+        <div class="hero">
+          <h1>Cutie, tell me the password</h1>
+          <p>Type the special date to start your surprise ✨</p>
+        </div>
+
+        <div class="gate panel">
+          <div class="input-row">
+            <input id="pass" type="password" placeholder="enter password..." inputmode="numeric" />
+            <button class="btn" id="unlock">Unlock</button>
+            <button class="music-toggle" id="musicToggle" title="no music in this build">🔈 Music</button>
+          </div>
+
+          <div class="previewRow" style="margin-top:12px">
+            <!-- swatches to preview color palette -->
+            <div style="text-align:center">
+              <div class="swatch" style="background:var(--cakeA)"></div>
+              <div class="swatchLabel">Soft Pink</div>
+            </div>
+            <div style="text-align:center">
+              <div class="swatch" style="background:var(--cakeB)"></div>
+              <div class="swatchLabel">Candy Pink</div>
+            </div>
+            <div style="text-align:center">
+              <div class="swatch" style="background:var(--cakeC)"></div>
+              <div class="swatchLabel">Hot Pink</div>
+            </div>
+            <div style="text-align:center">
+              <div class="swatch" style="background:var(--gold)"></div>
+              <div class="swatchLabel">Gold Glow</div>
+            </div>
+            <div style="text-align:center">
+              <div class="swatch" style="background:var(--accent)"></div>
+              <div class="swatchLabel">Accent</div>
+            </div>
+          </div>
+
+          <div style="color:var(--muted);font-size:13px;margin-top:10px">Hint: it's her special date — try it 😉</div>
+        </div>
+      </div>
+
+      <!-- CAKE STAGE -->
+      <div id="stageCake" class="stage hidden">
+        <div class="centered">
+          <div class="cake-scene">
+            <div class="cake-box">
+              <div class="cake-real" id="cake">
+                <div class="cake-tier" id="tier1" data-tier="1"></div>
+                <div class="cake-tier" id="tier2" data-tier="2"></div>
+                <div class="cake-tier" id="tier3" data-tier="3"></div>
+                <div class="candles" id="candles">
+                  <div class="candle"><div class="flame" id="flame1"></div></div>
+                  <div class="candle"><div class="flame" id="flame2"></div></div>
+                  <div class="candle"><div class="flame" id="flame3"></div></div>
+                </div>
+              </div>
+              <div class="smoke hidden" id="smoke">💨</div>
+            </div>
+
+            <div class="balloon-wrap">
+              <div class="balloon b1"></div>
+              <div class="balloon b2"></div>
+              <div class="balloon b3"></div>
+              <div class="balloon b4"></div>
+            </div>
+          </div>
+
+          <div style="height:8px"></div>
+          <div class="panel" style="max-width:720px;text-align:center">
+            <div id="cakeText" style="font-size:20px;font-weight:700;color:var(--muted)">Happy Birthday, Lathiga Sri 🎂</div>
+            <div style="margin-top:8px;color:var(--muted)">Tap the cake to blow the candles and continue</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GAME STAGE -->
+      <div id="stageGame" class="stage hidden">
+        <div class="panel">
+          <h3 style="margin:0 0 8px">Memory Match — Romantic</h3>
+          <div class="hud">
+            <div class="stat">⏱️ Time: <span id="time">0:00</span></div>
+            <div class="stat">🎯 Moves: <span id="moves">0</span></div>
+            <div class="stat">✅ Matches: <span id="found">0</span>/<span id="total">8</span></div>
+            <button class="btn" id="restart" style="margin-left:auto">Restart</button>
+          </div>
+          <div id="board" class="board" style="margin-top:14px"></div>
+        </div>
+
+        <div style="height:12px"></div>
+        <div class="panel">
+          <h3 style="margin:0 0 6px">Unlocked Note</h3>
+          <p id="noteBox" style="margin:0;color:var(--muted)">Finish the board to unlock the final surprise ❤️</p>
+        </div>
+      </div>
+
+      <!-- FINAL STAGE -->
+      <div id="stageFinal" class="stage hidden">
+        <div class="panel">
+          <h3 class="glow">A Letter for You</h3>
+          <div class="typewrap" id="typewrap"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- modal -->
+  <div class="modal" id="modal">
+    <div class="modal-card">
+      <h3 id="modalTitle">You did it! 🎉</h3>
+      <p id="modalText" style="color:var(--muted)">Final surprise unlocked.</p>
+      <button class="btn" id="nextBtn">Continue</button>
+    </div>
+  </div>
+
+<script>
+/* All logic wrapped to avoid accidental global errors. Works offline, no music. */
+(function(){
+  'use strict';
+
+  // --------- CONFIG ----------
+  const PASSWORD = '15082012'; // final code
+  const EXTRA = ['15082025'];  // optional accepted extras
+  const EMOJI_SET = ['💖','💖','🎂','🎂','🌸','🌸','🐻','🐻','🍓','🍓','🧁','🧁','🌈','🌈','💌','💌'];
+
+  // --------- DOM refs ----------
+  const passInput = document.getElementById('pass');
+  const unlockBtn = document.getElementById('unlock');
+  const musicToggle = document.getElementById('musicToggle');
+  const stagePassword = document.getElementById('stagePassword');
+  const stageCake = document.getElementById('stageCake');
+  const stageGame = document.getElementById('stageGame');
+  const stageFinal = document.getElementById('stageFinal');
+
+  const tier1 = document.getElementById('tier1');
+  const tier2 = document.getElementById('tier2');
+  const tier3 = document.getElementById('tier3');
+  const candles = document.getElementById('candles');
+  const flame1 = document.getElementById('flame1');
+  const flame2 = document.getElementById('flame2');
+  const flame3 = document.getElementById('flame3');
+  const smoke = document.getElementById('smoke');
+  const cakeText = document.getElementById('cakeText');
+  const cakeArea = document.getElementById('cake');
+
+  const boardEl = document.getElementById('board');
+  const timeEl = document.getElementById('time');
+  const movesEl = document.getElementById('moves');
+  const foundEl = document.getElementById('found');
+  const totalEl = document.getElementById('total');
+  const noteBox = document.getElementById('noteBox');
+  const restartBtn = document.getElementById('restart');
+
+  const modal = document.getElementById('modal');
+  const nextBtn = document.getElementById('nextBtn');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalText = document.getElementById('modalText');
+
+  const typewrap = document.getElementById('typewrap');
+
+  // --------- state ----------
+  let timer = null, seconds = 0, moves = 0, flipped = [], lockBoard = false, matched = 0, totalPairs = 8;
+  let heartTimer = null, flameTimer = null;
+
+  // safety: wait for DOM to be ready (in case file opens weirdly)
+  document.addEventListener('DOMContentLoaded', init);
+
+  function init(){
+    // event hookups
+    unlockBtn.addEventListener('click', tryUnlock);
+    passInput.addEventListener('keydown', e => { if(e.key === 'Enter') tryUnlock(); });
+    musicToggle.addEventListener('click', ()=>{ /* placeholder; no music in this build */ alert('Music turned off for this version'); });
+
+    tier1.style.background = `linear-gradient(180deg, var(--cakeA), #ffdfee)`;
+    tier2.style.background = `linear-gradient(180deg, var(--cakeB), #ffd6ea)`;
+    tier3.style.background = `linear-gradient(180deg, var(--cakeC), #ffb7d6)`;
+
+    // cake flame wobble effect
+    flameTimer = setInterval(()=> {
+      [flame1,flame2,flame3].forEach(f => { if(!f) return; f.style.transform = `translateY(${(Math.random()-0.5)*2}px) scale(${1+Math.random()*0.04})`; });
+    }, 160);
+
+    // cake click handler (delegated safe)
+    const cakeRoot = document.getElementById('cake');
+    cakeRoot && cakeRoot.addEventListener('click', onCakeClick);
+
+    nextBtn.addEventListener('click', ()=> {
+      modal.classList.remove('show');
+      // go to final
+      stageGame.classList.add('hidden');
+      stageFinal.classList.remove('hidden');
+      startFinal();
+    });
+
+    restartBtn && restartBtn.addEventListener('click', ()=> { buildBoard(); });
+
+    // init small responsive UI
+    passInput.focus();
+  }
+
+  // --------- Unlock logic ----------
+  function tryUnlock(){
+    const v = (passInput.value || '').trim();
+    console.log('[debug] typed ->', JSON.stringify(v));
+    if(v === PASSWORD || EXTRA.includes(v)){
+      // proceed
+      // hide password, show cake stage
+      stagePassword.classList.add('hidden');
+      stageCake.classList.remove('hidden');
+      // start cake build animation
+      buildCakeAnimation();
+    } else {
+      // tiny shake and border color
+      try { passInput.animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}], {duration:220, iterations:2}); } catch(e){}
+      passInput.style.borderColor = '#ff8fb1';
+      setTimeout(()=> passInput.style.borderColor = '', 900);
+    }
+  }
+
+  // --------- Cake build animation (layer reveal -> candle -> confetti/hearts) ----------
+  function buildCakeAnimation(){
+    // reset tiers & smoke
+    [tier1,tier2,tier3].forEach(t => { if(!t) return; t.style.opacity = 0; t.style.transform = 'translateY(30px)'; });
+    smoke.classList.add('hidden'); smoke.style.opacity = 0;
+
+    // step reveals
+    setTimeout(()=> revealTier(tier1, 0), 380);
+    setTimeout(()=> revealTier(tier2, 1), 900);
+    setTimeout(()=> revealTier(tier3, 2), 1400);
+
+    // show candles after tiers
+    setTimeout(()=> {
+      try {
+        [tier1,tier2,tier3].forEach(t => t.classList.add('swishIn'));
+        candles.style.opacity = 1;
+        // slight pop
+        candles.animate([{transform:'translateY(6px)'},{transform:'translateY(0)'}], {duration:420, easing:'ease-out'});
+      } catch(e){}
+    }, 1800);
+  }
+
+  function revealTier(el, idx){
+    if(!el) return;
+    try{
+      el.style.transition = 'transform 420ms cubic-bezier(.2,.9,.25,1), opacity 420ms ease';
+      el.style.opacity = 1;
+      el.style.transform = 'translateY(0)';
+      // small bounce
+      setTimeout(()=> {
+        try { el.animate([{transform:'translateY(0) scaleY(1)'},{transform:'translateY(-6px) scaleY(1.02)'},{transform:'translateY(0) scaleY(1)'}], {duration:420}); } catch(e){}
+      }, 460 + idx*40);
+    } catch(err){ console.warn('revealTier err', err); }
+  }
+
+  // when cake clicked
+  function onCakeClick(){
+    // stop flame wobble and hide flames
+    clearInterval(flameTimer);
+    [flame1,flame2,flame3].forEach(f => { if(!f) return; f.style.opacity = 0; });
+    // candle pop / smoke + text change
+    try { candles.style.transform = 'translateY(-10px)'; } catch(e){}
+    smoke.classList.remove('hidden'); smoke.style.opacity = 1; smoke.style.transform = 'translateY(-16px)';
+
+    cakeText.textContent = 'Happy Birthday, Lathiga Sri 🎂\nMake a wish...';
+    popHearts(12);
+    // after short delay go to game
+    setTimeout(()=> {
+      stageCake.classList.add('hidden');
+      stageGame.classList.remove('hidden');
+      startGame();
+    }, 1200);
+  }
+
+  // --------- confetti & hearts ----------
+  function popHearts(n){
+    for(let i=0;i<n;i++){
+      setTimeout(()=> {
+        try{
+          const el = document.createElement('div'); el.className = 'heart';
+          el.textContent = ['💖','💗','💞','💕','💘'][Math.floor(Math.random()*5)];
+          el.style.left = (20 + Math.random()*60) + '%';
+          el.style.top = (60 + Math.random()*20) + '%';
+          el.style.fontSize = (14 + Math.random()*28) + 'px';
+          document.body.appendChild(el);
+          setTimeout(()=> el.remove(), 1600);
+        }catch(e){/* ignore */}
+      }, i*70);
+    }
+  }
+
+  // basic confetti on canvas
+  const confCanvas = document.createElement('canvas'); confCanvas.id = 'confettiCanvas';
+  confCanvas.style.position = 'fixed'; confCanvas.style.inset = '0'; confCanvas.style.pointerEvents = 'none';
+  document.body.appendChild(confCanvas);
+  const cctx = confCanvas.getContext && confCanvas.getContext('2d');
+  function resizeConf(){ if(!cctx) return; confCanvas.width = innerWidth; confCanvas.height = innerHeight; }
+  window.addEventListener('resize', resizeConf);
+  resizeConf();
+  let confPieces = [];
+  function burst(){
+    if(!cctx) return;
+    confPieces = [];
+    const colors = ['#ff6b9f','#ffd166','#06d6a0','#118ab2','#ef476f','#9b5de5'];
+    for(let i=0;i<80;i++){
+      confPieces.push({
+        x: innerWidth/2 + (Math.random()-0.5)*80,
+        y: innerHeight/3 + (Math.random()-0.5)*40,
+        vx: (Math.random()-0.5)*8,
+        vy: Math.random()*-6-3,
+        g: .18+Math.random()*.08,
+        s: 4+Math.random()*6,
+        r: Math.random()*Math.PI,
+        vr: (Math.random()-0.5)*.2,
+        c: colors[Math.floor(Math.random()*colors.length)]
+      });
+    }
+    animateConf();
+    setTimeout(()=> confPieces = [], 4200);
+  }
+  function animateConf(){
+    if(!cctx) return;
+    cctx.clearRect(0,0,confCanvas.width,confCanvas.height);
+    confPieces.forEach(p=>{
+      p.vy += p.g;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.r += p.vr;
+      cctx.save(); cctx.translate(p.x,p.y); cctx.rotate(p.r); cctx.fillStyle = p.c; cctx.fillRect(-p.s/2,-p.s/2,p.s,p.s); cctx.restore();
+    });
+    if(confPieces.length) requestAnimationFrame(animateConf);
+  }
+
+  // --------- MEMORY GAME ----------
+  function startGame(){
+    buildBoard();
+  }
+
+  function buildBoard(){
+    const set = EMOJI_SET.slice();
+    // Fisher-Yates shuffle
+    for(let i=set.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [set[i],set[j]] = [set[j],set[i]]; }
+    matched = 0; flipped = []; moves = 0; seconds = 0; lockBoard = false;
+    totalPairs = set.length / 2;
+    foundEl.textContent = '0'; movesEl.textContent = '0'; totalEl.textContent = totalPairs;
+    noteBox.textContent = 'Finish the board to unlock the final surprise ❤️';
+
+    clearInterval(timer);
+    timeEl.textContent = '0:00';
+    timer = setInterval(()=>{ seconds++; timeEl.textContent = formatTime(seconds); }, 1000);
+
+    boardEl.innerHTML = '';
+    set.forEach(val=>{
+      const outer = document.createElement('div'); outer.className = 'card-outer';
+      const card = document.createElement('div'); card.className = 'card3d'; card.dataset.value = val;
+      const isURL = /^https?:\/\//i.test(val);
+      const backHTML = isURL ? `<img src="${val}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px"/>` : val;
+      card.innerHTML = `<div class="face front">🎁</div><div class="face back">${backHTML}</div>`;
+      outer.appendChild(card);
+      boardEl.appendChild(outer);
+    });
+    boardEl.querySelectorAll('.card3d').forEach(c=> c.addEventListener('click', ()=> flip(c)));
+  }
+
+  function flip(card){
+    if(lockBoard) return;
+    if(card.classList.contains('flipped') || card.classList.contains('matched')) return;
+    card.classList.add('flipped');
+    flipped.push(card);
+    if(flipped.length === 2){
+      moves++; movesEl.textContent = moves;
+      const [a,b] = flipped;
+      if(a.dataset.value === b.dataset.value){
+        a.classList.add('matched'); b.classList.add('matched');
+        flipped = []; matched++; foundEl.textContent = matched;
+        popHearts(3);
+        if(matched === totalPairs){
+          setTimeout(levelComplete, 600);
+        }
+      } else {
+        lockBoard = true;
+        setTimeout(()=> { a.classList.remove('flipped'); b.classList.remove('flipped'); flipped = []; lockBoard = false; }, 700);
+      }
+    }
+  }
+
+  function levelComplete(){
+    clearInterval(timer);
+    burst();
+    modalTitle.textContent = 'You did it! 🎉';
+    modalText.textContent = `Time: ${formatTime(seconds)} · Moves: ${moves}`;
+    modal.classList.add('show');
+  }
+
+  function formatTime(s){
+    const m = Math.floor(s/60); const sec = s%60; return `${m}:${sec.toString().padStart(2,'0')}`;
+  }
+
+  // --------- FINAL TYPEWRITER ----------
+  const TYPE_TEXT = `Happy Birthday, Lathiga Sri.
+
+My wifey, my honey, my sweety, my princess — you are the most beautiful part of my life. You are my safe place and my favorite dream come true. Your laughter is my favorite song and your smile is my sunrise. Today I promise more silly jokes, more midnight talks, and more of us.
+
+I love you forever. Forever and always.
+
+— Alisher`;
+
+  function startFinal(){
+    lockAllClicks(true);
+    typewrap.innerHTML = '';
+    typewrite(TYPE_TEXT, 44, ()=> {
+      const end = document.createElement('div');
+      end.style.marginTop = '12px';
+      end.style.textAlign = 'center';
+      end.innerHTML = `<div style="font-weight:900;font-size:20px;color:var(--rose);text-shadow:0 6px 30px rgba(179,58,91,0.08)">Forever Yours ♥</div>`;
+      typewrap.appendChild(end);
+      popHearts(18);
+      lockAllClicks(false);
+    });
+  }
+
+  function typewrite(text, speed, cb){
+    let i = 0;
+    function step(){
+      if(i >= text.length){ cb && cb(); return; }
+      const ch = text[i++];
+      if(ch === '\n'){ typewrap.innerHTML += '<br/>'; }
+      else { typewrap.innerHTML += escapeHtml(ch); }
+      let delay = speed;
+      if(ch === '.' || ch === '!' || ch === '?') delay += 200;
+      if(ch === ',') delay += 90;
+      setTimeout(step, delay);
+    }
+    step();
+  }
+
+  function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function lockAllClicks(state){
+    if(state){ document.body.style.pointerEvents = 'none'; document.getElementById('mainCard').style.pointerEvents = 'auto'; }
+    else { document.body.style.pointerEvents = 'auto'; }
+  }
+
+  // safety: remove flame timer when leaving page
+  window.addEventListener('beforeunload', ()=> { clearInterval(flameTimer); clearInterval(timer); clearInterval(heartTimer); });
+
+  // expose quick debug on console if you need
+  window.__birthday_debug = {
+    tryUnlock: tryUnlock,
+    buildBoard: buildBoard,
+    startFinal: startFinal
+  };
+
+})();
+</script>
+</body>
+</html>
