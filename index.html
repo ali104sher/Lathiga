@@ -239,7 +239,6 @@
   const flame3 = document.getElementById('flame3');
   const smoke = document.getElementById('smoke');
   const cakeText = document.getElementById('cakeText');
-  const cakeArea = document.getElementById('cake');
 
   const boardEl = document.getElementById('board');
   const timeEl = document.getElementById('time');
@@ -260,15 +259,15 @@
   let timer = null, seconds = 0, moves = 0, flipped = [], lockBoard = false, matched = 0, totalPairs = 8;
   let heartTimer = null, flameTimer = null;
 
-  // safety: wait for DOM to be ready (in case file opens weirdly)
+  // safety: wait for DOM to be ready
   document.addEventListener('DOMContentLoaded', init);
 
   function init(){
     // event hookups
     unlockBtn.addEventListener('click', tryUnlock);
     passInput.addEventListener('keydown', e => { if(e.key === 'Enter') tryUnlock(); });
-    // FIX: Added a check (&&) to ensure musicToggle exists before adding a listener. This prevents the script from crashing.
-    musicToggle && musicToggle.addEventListener('click', ()=>{ /* placeholder; no music in this build */ alert('Music turned off for this version'); });
+    // This safely checks if the musicToggle element exists before trying to use it.
+    musicToggle && musicToggle.addEventListener('click', ()=>{ alert('Music turned off for this version'); });
 
     tier1.style.background = `linear-gradient(180deg, var(--cakeA), #ffdfee)`;
     tier2.style.background = `linear-gradient(180deg, var(--cakeB), #ffd6ea)`;
@@ -279,60 +278,48 @@
       [flame1,flame2,flame3].forEach(f => { if(!f) return; f.style.transform = `translateY(${(Math.random()-0.5)*2}px) scale(${1+Math.random()*0.04})`; });
     }, 160);
 
-    // cake click handler (delegated safe)
+    // This finds the cake and attaches the click event. This is the crucial part.
     const cakeRoot = document.getElementById('cake');
     cakeRoot && cakeRoot.addEventListener('click', onCakeClick);
 
     nextBtn.addEventListener('click', ()=> {
       modal.classList.remove('show');
-      // go to final
       stageGame.classList.add('hidden');
       stageFinal.classList.remove('hidden');
       startFinal();
     });
 
     restartBtn && restartBtn.addEventListener('click', ()=> { buildBoard(); });
-
-    // init small responsive UI
     passInput.focus();
   }
 
   // --------- Unlock logic ----------
   function tryUnlock(){
     const v = (passInput.value || '').trim();
-    console.log('[debug] typed ->', JSON.stringify(v));
     if(v === PASSWORD || EXTRA.includes(v)){
-      // proceed
-      // hide password, show cake stage
       stagePassword.classList.add('hidden');
       stageCake.classList.remove('hidden');
-      // start cake build animation
       buildCakeAnimation();
     } else {
-      // tiny shake and border color
       try { passInput.animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}], {duration:220, iterations:2}); } catch(e){}
       passInput.style.borderColor = '#ff8fb1';
       setTimeout(()=> passInput.style.borderColor = '', 900);
     }
   }
 
-  // --------- Cake build animation (layer reveal -> candle -> confetti/hearts) ----------
+  // --------- Cake build animation ----------
   function buildCakeAnimation(){
-    // reset tiers & smoke
     [tier1,tier2,tier3].forEach(t => { if(!t) return; t.style.opacity = 0; t.style.transform = 'translateY(30px)'; });
     smoke.classList.add('hidden'); smoke.style.opacity = 0;
 
-    // step reveals
     setTimeout(()=> revealTier(tier1, 0), 380);
     setTimeout(()=> revealTier(tier2, 1), 900);
     setTimeout(()=> revealTier(tier3, 2), 1400);
 
-    // show candles after tiers
     setTimeout(()=> {
       try {
         [tier1,tier2,tier3].forEach(t => t.classList.add('swishIn'));
         candles.style.opacity = 1;
-        // slight pop
         candles.animate([{transform:'translateY(6px)'},{transform:'translateY(0)'}], {duration:420, easing:'ease-out'});
       } catch(e){}
     }, 1800);
@@ -344,26 +331,22 @@
       el.style.transition = 'transform 420ms cubic-bezier(.2,.9,.25,1), opacity 420ms ease';
       el.style.opacity = 1;
       el.style.transform = 'translateY(0)';
-      // small bounce
       setTimeout(()=> {
         try { el.animate([{transform:'translateY(0) scaleY(1)'},{transform:'translateY(-6px) scaleY(1.02)'},{transform:'translateY(0) scaleY(1)'}], {duration:420}); } catch(e){}
       }, 460 + idx*40);
-    } catch(err){ console.warn('revealTier err', err); }
+    } catch(err){}
   }
 
-  // when cake clicked
+  // when cake is clicked
   function onCakeClick(){
-    // stop flame wobble and hide flames
     clearInterval(flameTimer);
     [flame1,flame2,flame3].forEach(f => { if(!f) return; f.style.opacity = 0; });
-    // candle pop / smoke + text change
     try { candles.style.transform = 'translateY(-10px)'; } catch(e){}
     smoke.classList.remove('hidden'); smoke.style.opacity = 1; smoke.style.transform = 'translateY(-16px)';
 
-    // FIX: Changed to innerHTML and added <br> for a proper line break in the message.
     cakeText.innerHTML = 'Happy Birthday, Lathiga Sri 🎂<br>Make a wish...';
     popHearts(12);
-    // after short delay go to game
+    
     setTimeout(()=> {
       stageCake.classList.add('hidden');
       stageGame.classList.remove('hidden');
@@ -371,7 +354,7 @@
     }, 1200);
   }
 
-  // --------- confetti & hearts ----------
+  // --------- hearts ----------
   function popHearts(n){
     for(let i=0;i<n;i++){
       setTimeout(()=> {
@@ -383,51 +366,9 @@
           el.style.fontSize = (14 + Math.random()*28) + 'px';
           document.body.appendChild(el);
           setTimeout(()=> el.remove(), 1600);
-        }catch(e){/* ignore */}
+        }catch(e){}
       }, i*70);
     }
-  }
-
-  // basic confetti on canvas
-  const confCanvas = document.createElement('canvas'); confCanvas.id = 'confettiCanvas';
-  confCanvas.style.position = 'fixed'; confCanvas.style.inset = '0'; confCanvas.style.pointerEvents = 'none';
-  document.body.appendChild(confCanvas);
-  const cctx = confCanvas.getContext && confCanvas.getContext('2d');
-  function resizeConf(){ if(!cctx) return; confCanvas.width = innerWidth; confCanvas.height = innerHeight; }
-  window.addEventListener('resize', resizeConf);
-  resizeConf();
-  let confPieces = [];
-  function burst(){
-    if(!cctx) return;
-    confPieces = [];
-    const colors = ['#ff6b9f','#ffd166','#06d6a0','#118ab2','#ef476f','#9b5de5'];
-    for(let i=0;i<80;i++){
-      confPieces.push({
-        x: innerWidth/2 + (Math.random()-0.5)*80,
-        y: innerHeight/3 + (Math.random()-0.5)*40,
-        vx: (Math.random()-0.5)*8,
-        vy: Math.random()*-6-3,
-        g: .18+Math.random()*.08,
-        s: 4+Math.random()*6,
-        r: Math.random()*Math.PI,
-        vr: (Math.random()-0.5)*.2,
-        c: colors[Math.floor(Math.random()*colors.length)]
-      });
-    }
-    animateConf();
-    setTimeout(()=> confPieces = [], 4200);
-  }
-  function animateConf(){
-    if(!cctx) return;
-    cctx.clearRect(0,0,confCanvas.width,confCanvas.height);
-    confPieces.forEach(p=>{
-      p.vy += p.g;
-      p.x += p.vx;
-      p.y += p.vy;
-      p.r += p.vr;
-      cctx.save(); cctx.translate(p.x,p.y); cctx.rotate(p.r); cctx.fillStyle = p.c; cctx.fillRect(-p.s/2,-p.s/2,p.s,p.s); cctx.restore();
-    });
-    if(confPieces.length) requestAnimationFrame(animateConf);
   }
 
   // --------- MEMORY GAME ----------
@@ -437,7 +378,6 @@
 
   function buildBoard(){
     const set = EMOJI_SET.slice();
-    // Fisher-Yates shuffle
     for(let i=set.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [set[i],set[j]] = [set[j],set[i]]; }
     matched = 0; flipped = []; moves = 0; seconds = 0; lockBoard = false;
     totalPairs = set.length / 2;
@@ -452,8 +392,7 @@
     set.forEach(val=>{
       const outer = document.createElement('div'); outer.className = 'card-outer';
       const card = document.createElement('div'); card.className = 'card3d'; card.dataset.value = val;
-      const isURL = /^https?:\/\//i.test(val);
-      const backHTML = isURL ? `<img src="${val}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px"/>` : val;
+      const backHTML = val;
       card.innerHTML = `<div class="face front">🎁</div><div class="face back">${backHTML}</div>`;
       outer.appendChild(card);
       boardEl.appendChild(outer);
@@ -462,8 +401,7 @@
   }
 
   function flip(card){
-    if(lockBoard) return;
-    if(card.classList.contains('flipped') || card.classList.contains('matched')) return;
+    if(lockBoard || card.classList.contains('flipped') || card.classList.contains('matched')) return;
     card.classList.add('flipped');
     flipped.push(card);
     if(flipped.length === 2){
@@ -485,7 +423,6 @@
 
   function levelComplete(){
     clearInterval(timer);
-    burst();
     modalTitle.textContent = 'You did it! 🎉';
     modalText.textContent = `Time: ${formatTime(seconds)} · Moves: ${moves}`;
     modal.classList.add('show');
@@ -511,7 +448,6 @@ will u be mine..💍
 — Alisher`;
 
   function startFinal(){
-    lockAllClicks(true);
     typewrap.innerHTML = '';
     typewrite(TYPE_TEXT, 44, ()=> {
       const end = document.createElement('div');
@@ -520,7 +456,6 @@ will u be mine..💍
       end.innerHTML = `<div style="font-weight:900;font-size:20px;color:var(--rose);text-shadow:0 6px 30px rgba(179,58,91,0.08)">Forever Yours ♥</div>`;
       typewrap.appendChild(end);
       popHearts(18);
-      lockAllClicks(false);
     });
   }
 
@@ -541,21 +476,7 @@ will u be mine..💍
 
   function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  function lockAllClicks(state){
-    if(state){ document.body.style.pointerEvents = 'none'; document.getElementById('mainCard').style.pointerEvents = 'auto'; }
-    else { document.body.style.pointerEvents = 'auto'; }
-  }
-
-  // safety: remove flame timer when leaving page
-  window.addEventListener('beforeunload', ()=> { clearInterval(flameTimer); clearInterval(timer); clearInterval(heartTimer); });
-
-  // expose quick debug on console if you need
-  window.__birthday_debug = {
-    tryUnlock: tryUnlock,
-    buildBoard: buildBoard,
-    startFinal: startFinal
-  };
-
+  window.addEventListener('beforeunload', ()=> { clearInterval(flameTimer); clearInterval(timer); });
 })();
 </script>
 </body>
