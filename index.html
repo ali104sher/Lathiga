@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Cutie Birthday — All-in-One Surprise</title>
 
-<!-- Optional nice cursive font (works online). If offline, browser fallback will be used -->
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
 
 <style>
@@ -47,7 +46,7 @@
   .centered{display:grid;place-items:center}
   .cake-scene{display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:center}
   .cake-box{width:340px;height:360px;display:grid;place-items:center;position:relative}
-  .cake-real{width:260px;border-radius:18px;background:linear-gradient(180deg,#fff7f9,#ffeef3);box-shadow:0 18px 60px rgba(180,20,60,0.14);padding:18px;position:relative}
+  .cake-real{width:260px;border-radius:18px;background:linear-gradient(180deg,#fff7f9,#ffeef3);box-shadow:0 18px 60px rgba(180,20,60,0.14);padding:18px;position:relative;cursor:pointer;}
   .cake-tier{height:56px;border-radius:10px;background:linear-gradient(180deg,var(--cakeA),#ffdfee);margin:6px 0;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(30px)}
   .candles{position:absolute;top:36px;left:50%;transform:translateX(-50%);display:flex;gap:8px;pointer-events:none}
   .candle{width:8px;height:36px;background:linear-gradient(180deg,#ffdcd5,#ff9fb1);border-radius:4px;display:flex;align-items:flex-start;justify-content:center}
@@ -103,7 +102,6 @@
   <div class="wrap">
     <div class="card" id="mainCard">
 
-      <!-- PASSWORD / PREVIEW -->
       <div id="stagePassword" class="stage">
         <div class="hero">
           <h1>Cutie, tell me the password</h1>
@@ -117,7 +115,6 @@
           </div>
 
           <div class="previewRow" style="margin-top:12px">
-            <!-- swatches to preview color palette -->
             <div style="text-align:center">
               <div class="swatch" style="background:var(--cakeA)"></div>
               <div class="swatchLabel">Soft Pink</div>
@@ -144,7 +141,6 @@
         </div>
       </div>
 
-      <!-- CAKE STAGE -->
       <div id="stageCake" class="stage hidden">
         <div class="centered">
           <div class="cake-scene">
@@ -178,7 +174,6 @@
         </div>
       </div>
 
-      <!-- GAME STAGE -->
       <div id="stageGame" class="stage hidden">
         <div class="panel">
           <h3 style="margin:0 0 8px">Memory Match — Romantic</h3>
@@ -198,7 +193,6 @@
         </div>
       </div>
 
-      <!-- FINAL STAGE -->
       <div id="stageFinal" class="stage hidden">
         <div class="panel">
           <h3 class="glow">A Letter for You</h3>
@@ -209,7 +203,6 @@
     </div>
   </div>
 
-  <!-- modal -->
   <div class="modal" id="modal">
     <div class="modal-card">
       <h3 id="modalTitle">You did it! 🎉</h3>
@@ -274,7 +267,8 @@
     // event hookups
     unlockBtn.addEventListener('click', tryUnlock);
     passInput.addEventListener('keydown', e => { if(e.key === 'Enter') tryUnlock(); });
-    musicToggle.addEventListener('click', ()=>{ /* placeholder; no music in this build */ alert('Music turned off for this version'); });
+    // FIX: Added a check (&&) to ensure musicToggle exists before adding a listener. This prevents the script from crashing.
+    musicToggle && musicToggle.addEventListener('click', ()=>{ /* placeholder; no music in this build */ alert('Music turned off for this version'); });
 
     tier1.style.background = `linear-gradient(180deg, var(--cakeA), #ffdfee)`;
     tier2.style.background = `linear-gradient(180deg, var(--cakeB), #ffd6ea)`;
@@ -366,7 +360,8 @@
     try { candles.style.transform = 'translateY(-10px)'; } catch(e){}
     smoke.classList.remove('hidden'); smoke.style.opacity = 1; smoke.style.transform = 'translateY(-16px)';
 
-    cakeText.textContent = 'Happy Birthday, Lathiga Sri 🎂\nMake a wish...';
+    // FIX: Changed to innerHTML and added <br> for a proper line break in the message.
+    cakeText.innerHTML = 'Happy Birthday, Lathiga Sri 🎂<br>Make a wish...';
     popHearts(12);
     // after short delay go to game
     setTimeout(()=> {
